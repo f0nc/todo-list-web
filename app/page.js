@@ -1,25 +1,42 @@
 'use client'
 
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { useEffect, useState } from "react";
 
 export default function Home(props) {
+    const { user } = useUser();
+    const [entries, setEntries] = useState([]);
 
-  const { user, error, isLoading } = useUser();
+    useEffect(() => {
+        if (user == null) return;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+        fetch("/api/entry")
+            .then(response => {
+                if (!response.ok) { throw new Error("Error fetching /api/entry") }
+                return response.json();
+            })
+            .then(data => {
+                setEntries(data);
+            })
+            .catch(error => {
+                console.log("Error fetching /api/entries: " + error);
+            });
+    }, [user]);
 
-  if (user) {
+    if (user) {
+        const listEntries = entries.map(entry => <li key={entry.id}>{entry.id} {entry.username} {entry.description}</li>);
+        
+        return (
+            <div>
+                Hello {user.name}!
+                <div>{props.children}</div>
+                <ul>{listEntries}</ul>
+                <a href="/api/auth/logout">Logout</a>
+            </div>
+        );
+    }
+
     return (
-      <div>
-        Hello {user.name}!
-        <div>{props.children}</div>
-        <a href="/api/auth/logout">Logout</a>
-      </div>
-    );
-  }
-
-  return (
-    <a href="/api/auth/login">Login here!</a>
-  )
+        <a href="/api/auth/login">Login here!</a>
+    )
 }
