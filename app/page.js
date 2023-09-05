@@ -2,25 +2,14 @@
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
+import { fetchEntries } from "./utility/api";
 
 export default function Home(props) {
     const { user } = useUser();
     const [entries, setEntries] = useState([]);
 
     useEffect(() => {
-        if (user == null) return;
-
-        fetch("/api/entry")
-            .then(response => {
-                if (!response.ok) { throw new Error("Error fetching /api/entry") }
-                return response.json();
-            })
-            .then(data => {
-                setEntries(data);
-            })
-            .catch(error => {
-                console.log("Error fetching /api/entries: " + error);
-            });
+        if (user) { fetchEntries(setEntries) }
     }, [user]);
 
     if (user) {
