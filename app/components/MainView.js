@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchEntries } from "../utility/api";
 import EntryList from "./EntryList";
+import CreateEntryForm from "./CreateEntryForm";
 
 export default function MainView(props) {
     const user = props.user;
@@ -15,6 +16,7 @@ export default function MainView(props) {
         <div>
             Hello {user.name}!
             <EntryList entries={entries}/>
+            <CreateEntryForm didCreateNewEntry={() => fetchEntries(setEntries)}/>
             <a href="/api/auth/logout">Logout</a>
         </div>
     );
