@@ -1,4 +1,5 @@
 import './globals.css'
+import "bootstrap/dist/css/bootstrap.css"
 import { Inter } from 'next/font/google'
 import { UserProvider } from '@auth0/nextjs-auth0/client'
 
