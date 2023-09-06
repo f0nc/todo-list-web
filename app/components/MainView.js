@@ -15,8 +15,8 @@ export default function MainView(props) {
     return (
         <div>
             Hello {user.name}!
-            <EntryList entries={entries}/>
-            <CreateEntryForm didCreateNewEntry={() => fetchEntries(setEntries)}/>
+            <EntryList entries={entries} didDeleteEntry={() => fetchEntries(setEntries)} />
+            <CreateEntryForm didCreateNewEntry={() => fetchEntries(setEntries)} />
             <a href="/api/auth/logout">Logout</a>
         </div>
     );
