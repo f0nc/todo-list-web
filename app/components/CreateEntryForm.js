@@ -15,7 +15,7 @@ export default function CreateEntryForm(props) {
 
         if (response.ok) {
             setDescription("");
-            setFormSubmittedMessage("Entry created");
+            setFormSubmittedMessage("");
             didCreateNewEntry();
         } else {
             setFormSubmittedMessage("There was an error creating the entry");
@@ -23,15 +23,15 @@ export default function CreateEntryForm(props) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                name="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-            />
-            <button value="submit">Add</button>
-            <div>{formSubmittedMessage}</div>
-        </form>
-        
+        <>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3 col-6">
+                    <label htmlFor="inputDescription" className="form-label">Item description</label>
+                    <input type="text" className="form-control" id="inputDescription" name="description" value={description} onChange={(e) => setDescription(e.target.value)}/>
+                </div>
+                <button type="submit" className="btn btn-primary">Create</button>
+                <div>{formSubmittedMessage}</div>
+            </form>
+        </>
     );
 }
