@@ -39,6 +39,7 @@ export default function EntryList(props) {
                     <ul>
                         <li>Id: {entryInModal?.id}</li>
                         <li>Desctiption: {entryInModal?.description}</li>
+                        <li>Due date: {entryInModal?.dueDateTime}</li>
                     </ul>
                 </Modal.Body>
                 <Modal.Footer>

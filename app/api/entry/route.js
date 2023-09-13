@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const GET = withApiAuthRequired(async (req, res) => {
     const url = `${process.env.BACKEND_URL}/entry`;
     const { accessToken } = await getAccessToken(req, res);
-
+    
     const entriesResponse = await fetch(url, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -22,6 +22,9 @@ const POST = withApiAuthRequired(async (req) => {
     const formData = await req.formData();
     const { accessToken } = await getAccessToken();
 
+    const dueDateTime = new Date(formData.get("dueDateTime"));
+    const formattedDueDateTime = dueDateTime.toISOString();
+
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -31,6 +34,7 @@ const POST = withApiAuthRequired(async (req) => {
         },
         body: JSON.stringify({
             description: formData.get("description"),
+            dueDateTime: formattedDueDateTime,
         })
     });
 
