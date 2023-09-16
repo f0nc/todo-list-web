@@ -22,8 +22,11 @@ const POST = withApiAuthRequired(async (req) => {
     const formData = await req.formData();
     const { accessToken } = await getAccessToken();
 
-    const dueDateTime = new Date(formData.get("dueDateTime"));
-    const formattedDueDateTime = dueDateTime.toISOString();
+    const [formattedDueDateTime, apiErrorResponse] = parseDueDateTimeISOString(formData.get("dueDateTime"));
+    if (apiErrorResponse) {
+        console.log("Error response:" + JSON.stringify(apiErrorResponse));
+        return NextResponse.json(apiErrorResponse, { status: 400 });
+    }
 
     const response = await fetch(url, {
         method: "POST",
@@ -42,12 +45,30 @@ const POST = withApiAuthRequired(async (req) => {
         const apiErrorResponse = await response.json();
         console.log("Api error message: " + JSON.stringify(apiErrorResponse));
 
-        return NextResponse.json({ error: "Something went wrong" }, { status: 400 });
+        return NextResponse.json({ errors: apiErrorResponse.errors }, { status: 400 });
     }
 
     const entry = await response.json();
 
     return NextResponse.json(entry);
 });
+
+function parseDueDateTimeISOString(dueDateTimeString) {
+    let formattedDueDateTime = null;
+    let validationErrors = null;
+
+    try {
+        const dueDateTime = new Date(dueDateTimeString);
+        formattedDueDateTime = dueDateTime.toISOString();
+    } catch (error) {
+        validationErrors = {
+            errors: {
+                dueDateTime: ["Invalid date time"]
+            }
+        };
+    }
+
+    return [formattedDueDateTime, validationErrors]
+}
 
 export { GET, POST }
