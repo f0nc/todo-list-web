@@ -10,19 +10,9 @@ export default function Home(props) {
 
     let view = null;
     if (user) {
-        view =  <MainView user={user}/>
+        view = <MainView user={user}/>
     } else {
-        view = <div>
-            <div className="text-center pb-3">
-                <h1>You have to login to see content.</h1>
-            </div>
-            
-            <div className="d-flex justify-content-center">
-                <div className="d-grid gap-1 col-6">
-                <a className="btn btn-primary" href="/api/auth/login">Login</a>
-                </div>
-            </div>
-        </div>
+        view = <AnonymousMainView/>
     }
 
     return (
@@ -47,5 +37,21 @@ export default function Home(props) {
                 </Col>
             </Row>
         </Container>
+    );
+}
+
+function AnonymousMainView(props) {
+    return (
+        <div>
+            <div className="text-center pb-3">
+                <h1>You have to login to see content.</h1>
+            </div>
+            
+            <div className="d-flex justify-content-center">
+                <div className="d-grid gap-1 col-6">
+                <a className="btn btn-primary" href="/api/auth/login">Login</a>
+                </div>
+            </div>
+        </div>
     );
 }
