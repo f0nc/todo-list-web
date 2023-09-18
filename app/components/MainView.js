@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { fetchEntries } from "../utility/api";
 import EntryList from "./EntryList";
-import CreateEntryForm from "./CreateEntryForm";
-import { Button, Col, Modal, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
+import EntryCreateModal from "./EntryCreateModal";
 
 export default function MainView(props) {
     const user = props.user;
 
     const [entries, setEntries] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    const [showCreateEntryModal, setShowCreateEntryModal] = useState(false);
 
     useEffect(() => {
         if (user) { fetchEntries(setEntries) }
@@ -22,24 +22,18 @@ export default function MainView(props) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <div>
-                        <Button className="btn-md" onClick={() => setShowModal(true)}>New</Button>    
+                        <Button className="btn-md" onClick={() => setShowCreateEntryModal(true)}>New</Button>    
                     </div>
                 </Col>
             </Row>
-
-            <Modal show={showModal} centered={true} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton={true}>
-                    <h5>Create new item</h5>
-                </Modal.Header>
-                <Modal.Body>
-                    <CreateEntryForm 
-                        didCreateNewEntry={() => {
-                            setShowModal(false);
-                            fetchEntries(setEntries);
-                        }} 
-                    />
-                </Modal.Body>
-            </Modal>
+            <EntryCreateModal 
+                showModal={showCreateEntryModal}
+                handleHide={() => setShowCreateEntryModal(false)}
+                handleDidCreateEntry={() => {
+                    setShowCreateEntryModal(false);
+                    fetchEntries(setEntries);
+                }}
+            />
         </div>
     );
 }

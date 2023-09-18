@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import EntryDetailsModal from "./EntryDetailsModal";
 
 export default function EntryList(props) {
     const entries = props.entries;
     const didDeleteEntry = props.didDeleteEntry;
 
-    const [showModal, setShowModal] = useState(false);
+    const [showEntryDetailsModal, setShowEntryDetailsModal] = useState(false);
     const [entryInModal, setEntryInModal] = useState(null);
 
     const displayModal = (entry) => {
         setEntryInModal(entry);
-        setShowModal(true);
+        setShowEntryDetailsModal(true);
     }
-    const hideModal = () => setShowModal(false);
+    const hideModal = () => setShowEntryDetailsModal(false);
 
     async function handleDelete(entryId) {
         const response = await fetch("/api/entry/" + entryId, { method: "DELETE" });
@@ -33,19 +33,12 @@ export default function EntryList(props) {
         <>
             <p className="fs-3">List items</p>
             <ul>{listEntries}</ul>
-            <Modal show={showModal} centered={true} onHide={hideModal} >
-                <Modal.Header closeButton={true}>Item</Modal.Header>
-                <Modal.Body>
-                    <ul>
-                        <li>Id: {entryInModal?.id}</li>
-                        <li>Desctiption: {entryInModal?.description}</li>
-                        <li>Due date: {entryInModal?.dueDateTime}</li>
-                    </ul>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button className="btn-danger" onClick={() => handleDelete(entryInModal.id)}>Delete</Button>
-                </Modal.Footer>
-            </Modal>
+            <EntryDetailsModal 
+                showModal={showEntryDetailsModal} 
+                entry={entryInModal} 
+                handleDelete={() => handleDelete(entryInModal.id)}
+                handleHide={() => hideModal()}
+            />
         </>
     )
 }
