@@ -1,19 +1,16 @@
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from 'react-bootstrap';
 
-export default function EntryDetailsModal(props) {
-    const showModal = props.showModal;
-    const entry = props.entry;
-    const handleDelete = props.handleDelete;
-    const handleHide = props.handleHide;
-
+export default function EntryDetailsModal({
+    showModal, entry, handleDelete, handleHide,
+}) {
     return (
-        <Modal show={showModal} centered={true} onHide={handleHide} >
-            <Modal.Header closeButton={true}>Item</Modal.Header>
+        <Modal show={showModal} centered onHide={handleHide}>
+            <Modal.Header closeButton>Item</Modal.Header>
             <Modal.Body>
                 <ul>
-                    <li>Id: {entry?.id}</li>
-                    <li>Desctiption: {entry?.description}</li>
-                    <li>Due date: {entry?.dueDateTime}</li>
+                    <li>{`Id: ${entry?.id}`}</li>
+                    <li>{`Description: ${entry?.description}`}</li>
+                    <li>{`Due date: ${entry?.dueDateTime}`}</li>
                 </ul>
             </Modal.Body>
             <Modal.Footer>

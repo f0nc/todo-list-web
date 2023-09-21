@@ -1,15 +1,32 @@
-import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0"
-import { NextResponse } from "next/server";
+import { getAccessToken, withApiAuthRequired } from '@auth0/nextjs-auth0';
+import { NextResponse } from 'next/server';
 
+function parseDueDateTimeISOString(dueDateTimeString) {
+    let formattedDueDateTime = null;
+    let validationErrors = null;
+
+    try {
+        const dueDateTime = new Date(dueDateTimeString);
+        formattedDueDateTime = dueDateTime.toISOString();
+    } catch (error) {
+        validationErrors = {
+            errors: {
+                dueDateTime: ['Invalid date time'],
+            },
+        };
+    }
+
+    return [formattedDueDateTime, validationErrors];
+}
 
 const GET = withApiAuthRequired(async (req, res) => {
     const url = `${process.env.BACKEND_URL}/entry`;
     const { accessToken } = await getAccessToken(req, res);
-    
+
     const entriesResponse = await fetch(url, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
-        }
+        },
     });
 
     const entries = await entriesResponse.json();
@@ -22,30 +39,30 @@ const POST = withApiAuthRequired(async (req) => {
     const formData = await req.formData();
     const { accessToken } = await getAccessToken();
 
-    const [formattedDueDateTime, apiErrorResponse] = parseDueDateTimeISOString(formData.get("dueDateTime"));
+    const [formattedDueDateTime, apiErrorResponse] = parseDueDateTimeISOString(formData.get('dueDateTime'));
     if (apiErrorResponse) {
-        console.log("Error response:" + JSON.stringify(apiErrorResponse));
+        console.log(`Error response:${JSON.stringify(apiErrorResponse)}`);
         return NextResponse.json(apiErrorResponse, { status: 400 });
     }
 
     const response = await fetch(url, {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
 
         },
         body: JSON.stringify({
-            description: formData.get("description"),
+            description: formData.get('description'),
             dueDateTime: formattedDueDateTime,
-        })
+        }),
     });
 
     if (!response.ok) {
-        const apiErrorResponse = await response.json();
-        console.log("Api error message: " + JSON.stringify(apiErrorResponse));
+        const backendApiErrorResponse = await response.json();
+        console.log(`Api error message: ${JSON.stringify(backendApiErrorResponse)}`);
 
-        return NextResponse.json({ errors: apiErrorResponse.errors }, { status: 400 });
+        return NextResponse.json({ errors: backendApiErrorResponse.errors }, { status: 400 });
     }
 
     const entry = await response.json();
@@ -53,22 +70,4 @@ const POST = withApiAuthRequired(async (req) => {
     return NextResponse.json(entry);
 });
 
-function parseDueDateTimeISOString(dueDateTimeString) {
-    let formattedDueDateTime = null;
-    let validationErrors = null;
-
-    try {
-        const dueDateTime = new Date(dueDateTimeString);
-        formattedDueDateTime = dueDateTime.toISOString();
-    } catch (error) {
-        validationErrors = {
-            errors: {
-                dueDateTime: ["Invalid date time"]
-            }
-        };
-    }
-
-    return [formattedDueDateTime, validationErrors]
-}
-
-export { GET, POST }
+export { GET, POST };

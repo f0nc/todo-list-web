@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { fetchEntries } from "../utility/api";
-import EntryList from "./EntryList";
-import { Button, Col, Row } from "react-bootstrap";
-import EntryCreateModal from "./EntryCreateModal";
+import { useEffect, useState } from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
+import { fetchEntries } from '../utility/api';
+import EntryList from './EntryList';
+import EntryCreateModal from './EntryCreateModal';
 
 export default function MainView(props) {
-    const user = props.user;
+    const { user } = props;
 
     const [entries, setEntries] = useState([]);
     const [showCreateEntryModal, setShowCreateEntryModal] = useState(false);
 
     useEffect(() => {
-        if (user) { fetchEntries(setEntries) }
+        if (user) { fetchEntries(setEntries); }
     }, [user]);
 
     return (
@@ -22,11 +22,11 @@ export default function MainView(props) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <div>
-                        <Button className="btn-md" onClick={() => setShowCreateEntryModal(true)}>New</Button>    
+                        <Button className="btn-md" onClick={() => setShowCreateEntryModal(true)}>New</Button>
                     </div>
                 </Col>
             </Row>
-            <EntryCreateModal 
+            <EntryCreateModal
                 showModal={showCreateEntryModal}
                 handleHide={() => setShowCreateEntryModal(false)}
                 handleDidCreateEntry={() => {
