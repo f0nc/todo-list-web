@@ -1,25 +1,4 @@
-import { useState } from 'react';
-import EntryDetailsModal from './EntryDetailsModal';
-
-export default function EntryList({ entries, didDeleteEntry }) {
-    const [showEntryDetailsModal, setShowEntryDetailsModal] = useState(false);
-    const [entryInModal, setEntryInModal] = useState(null);
-
-    const displayModal = (entry) => {
-        setEntryInModal(entry);
-        setShowEntryDetailsModal(true);
-    };
-    const hideModal = () => setShowEntryDetailsModal(false);
-
-    async function handleDelete(entryId) {
-        const response = await fetch(`/api/entry/${entryId}`, { method: 'DELETE' });
-
-        if (response.ok) {
-            didDeleteEntry();
-            hideModal();
-        }
-    }
-
+export default function EntryList({ entries, didSelectEntry }) {
     const sortedUniqueDueDates = entries
         // Get dates
         .map((entry) => entry.dueDateTime.split('T')[0])
@@ -44,7 +23,7 @@ export default function EntryList({ entries, didDeleteEntry }) {
 
         const listItems = entriesForDueDate.map((entry) => (
             <li key={entry.id}>
-                <a onClick={() => displayModal(entry)}>{entry.description}</a>
+                <a onClick={() => didSelectEntry(entry)}>{entry.description}</a>
             </li>
         ));
 
@@ -63,12 +42,6 @@ export default function EntryList({ entries, didDeleteEntry }) {
         <>
             <p className="fs-3">List items</p>
             {listEntriesByDueDate}
-            <EntryDetailsModal
-                showModal={showEntryDetailsModal}
-                entry={entryInModal}
-                handleDelete={() => handleDelete(entryInModal.id)}
-                handleHide={() => hideModal()}
-            />
         </>
     );
 }
